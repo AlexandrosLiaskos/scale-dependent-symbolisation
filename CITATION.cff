@@ -14,6 +14,8 @@ authors:
 license: AGPL-3.0-only
 repository-code: "https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation"
 version: 0.1.0
+doi: 10.5281/zenodo.24460750
+date-released: 2026-11-23
 keywords:
   - cartography
   - web mapping

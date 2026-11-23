@@ -1,5 +1,9 @@
 # Scale-Dependent Symbolisation and Collision-Free Clustering of Map Features
 
+[![Checks](https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24460750.svg)](https://doi.org/10.5281/zenodo.24460750)
+[![Licence: AGPL-3.0](https://img.shields.io/badge/licence-AGPL--3.0-blue.svg)](LICENSE)
+
 A web map of a research dataset usually holds features of very different sizes: points, small lines and polygons that
 are invisible at a small map scale, and large ones that are clearly visible. This library decides, for every record and
 every zoom level, in which single form the record is drawn:
@@ -176,8 +180,11 @@ change, for instance with a filter, call `symbolise` again with the remaining on
 
 ## Citation
 
-The citation of the software is given in [CITATION.cff](CITATION.cff). Each release is archived on Zenodo with its own
-DOI.
+Liaskos, A. (2026). *Scale-Dependent Symbolisation and Collision-Free Clustering of Map Features* (Version 0.1.0)
+[Computer software]. Zenodo. https://doi.org/10.5281/zenodo.24460750
+
+The citation is also given in [CITATION.cff](CITATION.cff), which GitHub offers under "Cite this repository". Each
+release is archived on Zenodo with its own DOI.
 
 ## Licence
 
