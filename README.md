@@ -180,11 +180,12 @@ change, for instance with a filter, call `symbolise` again with the remaining on
 
 ## Citation
 
-Liaskos, A. (2026). *Scale-Dependent Symbolisation and Collision-Free Clustering of Map Features* (Version 0.1.0)
+Liaskos, A. (2026). _Scale-Dependent Symbolisation and Collision-Free Clustering of Map Features_ (Version 0.1.0)
 [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.24460750
 
-The citation is also given in [CITATION.cff](CITATION.cff), which GitHub offers under "Cite this repository". Each
-release is archived on Zenodo with its own DOI.
+To cite every version at once, use the concept DOI [10.5281/zenodo.24460749](https://doi.org/10.5281/zenodo.24460749),
+which always resolves to the latest release. The citation is also given in [CITATION.cff](CITATION.cff), which GitHub
+offers under "Cite this repository". Each release is archived on Zenodo with its own DOI.
 
 ## Licence
 
