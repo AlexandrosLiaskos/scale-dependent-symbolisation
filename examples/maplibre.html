@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scale-dependent symbolisation with MapLibre GL JS</title>
+    <!-- Build the library first (npm run build) and serve the repository folder, for example: npx serve . -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.18.0/dist/maplibre-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        height: 100%;
+        margin: 0;
+      }
+      #note {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 8px 10px;
+        background: #fff;
+        font:
+          13px/1.4 system-ui,
+          sans-serif;
+        box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="note">Zoom level <span id="zoom"></span>: <span id="counts"></span></div>
+    <script type="module">
+      import { Map } from "https://unpkg.com/maplibre-gl@6.18.0/dist/maplibre-gl.mjs";
+      import { symbolise } from "../dist/index.js";
+
+      // Generated records: 600 points and 300 squares from a few metres to about 30 km wide, around the Aegean Sea.
+      let seed = 7;
+      const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+      const features = [];
+      for (let id = 0; id < 900; id++) {
+        const lng = 20 + random() * 8;
+        const lat = 35 + random() * 6;
+        if (id < 600) {
+          features.push({ type: "Feature", id, properties: {}, geometry: { type: "Point", coordinates: [lng, lat] } });
+        } else {
+          const side = 10 ** (-4 + random() * 3.5);
+          const ring = [
+            [lng, lat],
+            [lng + side, lat],
+            [lng + side, lat + side],
+            [lng, lat + side],
+            [lng, lat],
+          ];
+          features.push({ type: "Feature", id, properties: {}, geometry: { type: "Polygon", coordinates: [ring] } });
+        }
+      }
+
+      const map = new Map({
+        container: "map",
+        style: "https://tiles.openfreemap.org/styles/positron",
+        bounds: [
+          [20, 35],
+          [28, 41],
+        ],
+      });
+
+      const symbolisation = symbolise(features.map((feature) => ({ id: feature.id, geometry: feature.geometry })));
+
+      map.on("load", () => {
+        const outlined = features
+          .filter((feature) => Number.isFinite(symbolisation.outlineZoomOf(feature.id)))
+          .map((feature) => ({ ...feature, properties: { outlineZoom: symbolisation.outlineZoomOf(feature.id) } }));
+        map.addSource("outlines", { type: "geojson", data: { type: "FeatureCollection", features: outlined } });
+        const drawn = [">=", ["zoom"], ["get", "outlineZoom"]];
+        map.addLayer({
+          id: "fills",
+          type: "fill",
+          source: "outlines",
+          filter: drawn,
+          paint: { "fill-color": "#0d9488", "fill-opacity": 0.4 },
+        });
+        map.addLayer({
+          id: "lines",
+          type: "line",
+          source: "outlines",
+          filter: drawn,
+          paint: { "line-color": "#0d9488", "line-width": 1.5 },
+        });
+
+        map.addSource("symbols", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({
+          id: "clusters",
+          type: "circle",
+          source: "symbols",
+          filter: ["==", ["get", "kind"], "cluster"],
+          paint: {
+            "circle-color": "#171717",
+            "circle-radius": ["step", ["get", "count"], 18, 10, 21, 100, 24],
+            "circle-stroke-color": "#5eead4",
+            "circle-stroke-width": 4,
+          },
+        });
+        map.addLayer({
+          id: "counts",
+          type: "symbol",
+          source: "symbols",
+          filter: ["==", ["get", "kind"], "cluster"],
+          layout: { "text-field": ["to-string", ["get", "count"]], "text-font": ["Noto Sans Bold"], "text-size": 12 },
+          paint: { "text-color": "#ffffff" },
+        });
+        map.addLayer({
+          id: "markers",
+          type: "circle",
+          source: "symbols",
+          filter: ["==", ["get", "kind"], "marker"],
+          paint: { "circle-color": "#0d9488", "circle-radius": 7, "circle-stroke-color": "#5eead4", "circle-stroke-width": 2.5 },
+        });
+
+        let level = -1;
+        const drawSymbols = () => {
+          const zoom = Math.floor(map.getZoom());
+          if (zoom === level) return;
+          level = zoom;
+          const symbols = symbolisation.symbolsAt(zoom);
+          map.getSource("symbols").setData({
+            type: "FeatureCollection",
+            features: symbols.map((symbol) => ({
+              type: "Feature",
+              geometry: { type: "Point", coordinates: symbol.position },
+              properties: symbol.kind === "marker" ? { kind: "marker", id: symbol.id } : { kind: "cluster", count: symbol.count },
+            })),
+          });
+          const markers = symbols.filter((symbol) => symbol.kind === "marker").length;
+          const outlines = features.filter((feature) => symbolisation.outlineZoomOf(feature.id) <= zoom).length;
+          document.getElementById("zoom").textContent = zoom;
+          document.getElementById("counts").textContent = `${outlines} outlines, ${markers} markers, ${symbols.length - markers} clusters`;
+        };
+        drawSymbols();
+        map.on("zoom", drawSymbols);
+        map.on("click", "clusters", (event) => map.easeTo({ center: event.lngLat, zoom: level + 2 }));
+      });
+    </script>
+  </body>
+</html>

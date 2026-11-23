@@ -1,0 +1,50 @@
+{
+  "name": "scale-dependent-symbolisation",
+  "version": "0.1.0",
+  "description": "Scale-dependent symbolisation and collision-free clustering of map features: each record is drawn as a point marker until it is large enough on the screen to be drawn with its outline, and markers that would touch are grouped in nested clusters.",
+  "keywords": [
+    "cartography",
+    "web-mapping",
+    "clustering",
+    "generalisation",
+    "level-of-detail",
+    "geojson",
+    "maplibre",
+    "leaflet",
+    "openlayers"
+  ],
+  "license": "AGPL-3.0-only",
+  "author": "Alexandros Liaskos",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation.git"
+  },
+  "homepage": "https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation#readme",
+  "bugs": "https://github.com/AlexandrosLiaskos/scale-dependent-symbolisation/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "CITATION.cff"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "types": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run types && npm test && npm run build"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  }
+}

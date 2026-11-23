@@ -1,0 +1,13 @@
+{
+  "title": "Scale-Dependent Symbolisation and Collision-Free Clustering of Map Features",
+  "upload_type": "software",
+  "description": "<p>A JavaScript library that decides, for every record of a web map and every zoom level, in which single form the record is drawn: a line or polygon with its outline from the zoom level at which it is large enough on the screen, and a point marker before that. Point markers that would be too close are grouped in nested clusters, and no marker or cluster is left touching another. It has no dependencies and works with MapLibre GL JS, Mapbox GL JS, Leaflet and OpenLayers.</p>",
+  "creators": [
+    {
+      "name": "Liaskos, Alexandros",
+      "affiliation": "National and Kapodistrian University of Athens"
+    }
+  ],
+  "license": "AGPL-3.0-only",
+  "keywords": ["cartography", "web mapping", "clustering", "cartographic generalisation", "level of detail", "GeoJSON"]
+}
